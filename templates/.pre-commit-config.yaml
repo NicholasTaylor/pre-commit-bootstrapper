@@ -1,0 +1,10 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: BLACK_VER
+    hooks:      
+      - id: black
+        language_version: PYTHON_VER  
+  - repo: https://github.com/PyCQA/flake8
+    rev: FLAKE8_VER
+    hooks:
+      - id: flake8
