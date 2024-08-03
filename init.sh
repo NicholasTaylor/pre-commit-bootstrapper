@@ -1,4 +1,6 @@
 #!/bin/bash
+SCRIPT_DIR="$( dirname -- "${BASH_SOURCE[0]}" )"
+ORIGIN_DIR=$(pwd)
 source .env
 
 GIT_DIR=".git"
@@ -7,9 +9,9 @@ VALID_PATH=false
 while [ $VALID_PATH = false ]
 do
     echo "Specify the path where you want your repo to exist"
-    read FP
-    FP=${FP/#\~/$HOME}
-    if mkdir -p $FP
+    read TARGET_DIR
+    TARGET_DIR=${TARGET_DIR/#\~/$HOME}
+    if mkdir -p $TARGET_DIR
     then
         echo "Creating path if not yet existant"
         VALID_PATH=true
@@ -19,10 +21,8 @@ do
 done
 
 #Set up config files
-cd $(dirname "${BASH_SOURCE[0]}")
-SOURCE_DIR=$(pwd)
-TEMPLATE_DIR="$SOURCE_DIR/templates"
-cd $FP
+TEMPLATE_DIR="$SCRIPT_DIR/templates"
+cd $TARGET_DIR
 FLAKE_FILE=".flake8"
 YAML_FILE=".pre-commit-config.yaml"
 TOML_FILE="pyproject.toml"
@@ -74,5 +74,8 @@ sed -i -e "s/FLAKE8_VER/$FLAKE8_VER/" $YAML_FILE
 sed -i -e "s/PYTHON_VER/$PYTHON_VER/" $YAML_FILE
 
 pre-commit install
+deactivate
 
-cd $SOURCE_DIR
+cd $ORIGIN_DIR
+
+unset SCRIPT_DIR ORIGIN_DIR GIT_DIR VALID_PATH TARGET_DIR TEMPLATE_DIR FLAKE_FILE YAML_FILE TOML_FILE CONFIG_FLAKE CONFIG_YAML CONFIG_TOML VENV_SUBDIR BLACK_VER FLAKE8_VER PYTHON_VER PYTHON_PATH VENV_DIR
